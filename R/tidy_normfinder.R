@@ -73,7 +73,7 @@ tidy_normfinder<-function(data,
              t = max(sumdd / n - meanvar, 0),
              dn = dif * t / (t + var_n),
              varnew = var_n + t * var_n /(t + var_n),
-             qm = abs(dn) + sqrt(vaRnew))%>% 
+             qm = abs(dn) + sqrt(varnew))%>% 
       dplyr:: group_by(gene)%>%
       dplyr::summarise(rho = mean(qm))%>%
       dplyr::arrange(rho)
