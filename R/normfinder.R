@@ -15,29 +15,29 @@
 normfinder<-function(data, group = TRUE, ctVal=FALSE, pStabLim=0.3, sample = "sample", gene = "gene", groups = "group", cq = "cq"){
   
   # Group & sample ID
-  sample_group <- unique(data[,c(sample, groups)])
+  sample_group <- unique(data %>% select(sample, groups))  #unique(data[,c(sample, groups)])
+  colnames(sample_group) <- c("sample","groups")
   
-  tmp <- data.frame(sample = as.character(data[, sample]),
-                  gene = as.character(data[, gene]),
-                  cq = as.numeric(data[, cq]))
+  tmp <- data %>% select(sample, gene, cq)
+        #data.frame(sample = as.character(data[, sample]), gene = as.character(data[, gene]), cq = as.numeric(data[, cq]))
   tmp <- tmp %>%
     dplyr::group_by(sample, gene) %>%
     dplyr::summarise(cq=mean(cq, na.rm=T)) %>%
     tidyr::spread(sample, cq)
   
-  ntotal<-length(sample_group[,1])
+  ntotal <- length(sample_group[,1]$sample)
   
   if (group == TRUE){
     ngenes <- length(tmp$gene) # number of genes
     genenames <- as.character(tmp$gene)
-    grId <- factor(sample_group[,2])
+    grId <- factor(sample_group$groups)
   } else {
     ngenes <- length(tmp$gene) # number of genes
     genenames <- as.character(tmp$gene)
     grId <- rep(1,ntotal)
   }
   
-  tmp <- data.matrix(tmp[,sample_group[,1]])
+  tmp <- data.matrix(tmp[,sample_group[,1]$sample])
   
   if (!ctVal){tmp<-log2(tmp)}
   
